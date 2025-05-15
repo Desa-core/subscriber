@@ -1,11 +1,11 @@
-import { Module, OnModuleInit } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SubscriberModule } from './subscriber/subscriber.module';
-import { SubscriberService } from './subscriber/subscriber.service';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [SubscriberModule],
+  imports: [ConfigModule.forRoot({ isGlobal: true }), SubscriberModule],
   controllers: [AppController],
   providers: [AppService],
 })

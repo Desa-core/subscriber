@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { SubscriberService } from './subscriber.service';
+import { ApiHeader, ApiQuery } from '@nestjs/swagger';
 
 @Controller('callback')
 export class SubscriberController {
@@ -22,11 +23,39 @@ export class SubscriberController {
 
   // Validación del hub (GET con hub.challenge)
   @Get()
+  @ApiQuery({
+    name: 'hub.mode',
+    type: String,
+    example: 'subscribe',
+    required: false,
+    description: 'The mode of the subscription',
+  })
+  @ApiQuery({
+    name: 'hub.topic',
+    type: String,
+    example: 'order.created',
+    required: false,
+    description: 'The topic of the subscription',
+  })
+  @ApiQuery({
+    name: 'hub.challenge',
+    type: String,
+    example: '123456789',
+    required: true,
+    description: 'The challenge to be echoed back',
+  })
+  @ApiQuery({
+    name: 'hub.lease_days',
+    type: String,
+    example: '365',
+    required: false,
+    description: 'The lease duration in days',
+  })
   async handleVerification(
     @Query('hub.mode') mode: string,
     @Query('hub.topic') topic: string,
     @Query('hub.challenge') challenge: string,
-    @Query('hub.lease_seconds') lease: string,
+    @Query('hub.lease_days') lease: string,
     @Res() res: Response,
   ) {
     this.logger.log(
@@ -37,6 +66,14 @@ export class SubscriberController {
 
   // Recepción de contenido (POST)
   @Post()
+  @ApiHeader({
+    name: 'x-hub-signature',
+    required: false,
+    description:
+      'HMAC signature for verifying the request. Use: https://emn178.github.io/online-tools/sha256.html Example: sha256=3c81cc9496e1c25250f6ccb85f697c1bb623e3480d6538ad8cb6a6648142777d',
+    example:
+      'sha256=3c81cc9496e1c25250f6ccb85f697c1bb623e3480d6538ad8cb6a6648142777d',
+  })
   async receiveContent(
     @Req() req: Request,
     @Res() res: Response,
