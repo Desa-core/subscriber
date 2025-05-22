@@ -24,38 +24,38 @@ export class SubscriberController {
   // Validación del hub (GET con hub.challenge)
   @Get()
   @ApiQuery({
-    name: 'hub.mode',
+    name: 'mode',
     type: String,
     example: 'subscribe',
     required: false,
     description: 'The mode of the subscription',
   })
   @ApiQuery({
-    name: 'hub.topic',
+    name: 'topic',
     type: String,
     example: 'order.created',
     required: false,
     description: 'The topic of the subscription',
   })
   @ApiQuery({
-    name: 'hub.challenge',
+    name: 'challenge',
     type: String,
     example: '123456789',
     required: true,
     description: 'The challenge to be echoed back',
   })
   @ApiQuery({
-    name: 'hub.lease_days',
+    name: 'lease_days',
     type: String,
     example: '365',
     required: false,
     description: 'The lease duration in days',
   })
   async handleVerification(
-    @Query('hub.mode') mode: string,
-    @Query('hub.topic') topic: string,
-    @Query('hub.challenge') challenge: string,
-    @Query('hub.lease_days') lease: string,
+    @Query('mode') mode: string,
+    @Query('topic') topic: string,
+    @Query('challenge') challenge: string,
+    @Query('lease_days') lease: string,
     @Res() res: Response,
   ) {
     this.logger.log(
