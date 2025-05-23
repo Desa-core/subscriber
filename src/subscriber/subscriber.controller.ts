@@ -11,8 +11,8 @@ import {
   Headers,
   Logger,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
-import { SubscriberService } from './subscriber.service';
+import type { Request, Response } from 'express';
+import type { SubscriberService } from './subscriber.service';
 import { ApiHeader, ApiQuery } from '@nestjs/swagger';
 
 @Controller('callback')
@@ -21,50 +21,42 @@ export class SubscriberController {
 
   constructor(private readonly subscriberService: SubscriberService) {}
 
-  // Validación del hub (GET con hub.challenge)
+  /// Verificación de la suscripción (GET)
+  /// Este endpoint es llamado por el proveedor para verificar la suscripción.
+  /// Debe devolver el valor del parámetro "challenge" que recibe en la query.
+  /// El proveedor lo usará para verificar que el endpoint es correcto.
   @Get()
   @ApiQuery({
-    name: 'hub.mode',
-    type: String,
-    example: 'subscribe',
-    required: false,
-    description: 'The mode of the subscription',
-  })
-  @ApiQuery({
-    name: 'hub.topic',
+    name: 'topic',
     type: String,
     example: 'order.created',
-    required: false,
-    description: 'The topic of the subscription',
+    required: true,
+    description: 'El tópico de la suscripción',
   })
   @ApiQuery({
-    name: 'hub.challenge',
+    name: 'challenge',
     type: String,
     example: '123456789',
     required: true,
-    description: 'The challenge to be echoed back',
-  })
-  @ApiQuery({
-    name: 'hub.lease_days',
-    type: String,
-    example: '365',
-    required: false,
-    description: 'The lease duration in days',
+    description: 'El desafío que debe ser devuelto',
   })
   async handleVerification(
-    @Query('hub.mode') mode: string,
-    @Query('hub.topic') topic: string,
-    @Query('hub.challenge') challenge: string,
-    @Query('hub.lease_days') lease: string,
+    @Query('topic') topic: string,
+    @Query('challenge') challenge: string,
     @Res() res: Response,
   ) {
     this.logger.log(
-      `Verifying intent: mode=${mode}, topic=${topic}, lease=${lease}`,
+      `Verificando intención de subscripción: topic=${topic}, challenge=${challenge}.`,
     );
     res.status(200).send(challenge); // MUST echo back the challenge
   }
 
-  // Recepción de contenido (POST)
+  /// Recepción de contenido (POST)
+  /// Este endpoint es llamado por el proveedor para enviar contenido.
+  /// Debe procesar el contenido y devolver un código 204 (No Content) para indicar que lo recibió correctamente.
+  /// Si no se puede procesar el contenido, debe devolver un código 200 (OK) para evitar reintentos.
+  /// El contenido se recibe en el cuerpo de la petición.
+  /// El proveedor enviará el contenido en formato JSON.
   @Post()
   @ApiHeader({
     name: 'x-hub-signature',
@@ -81,17 +73,17 @@ export class SubscriberController {
     @Body() body: any,
   ) {
     const rawBody = JSON.stringify(body);
-    this.logger.log('Received content update.');
+    this.logger.log('Contenido recibido.');
 
     if (signature) {
       const valid = this.subscriberService.verifySignature(rawBody, signature);
       if (!valid) {
-        this.logger.warn('Invalid signature. Ignoring message.');
+        this.logger.warn('Firma inválida. Ignorando mensaje.');
         return res.status(200).send(); // Still 2xx to prevent retries
       }
     }
 
-    this.logger.log(`Content:\n${rawBody}`);
+    this.logger.log(`Contenido:\n${rawBody}`);
     res.status(204).send(); // Acknowledge content received
   }
 }

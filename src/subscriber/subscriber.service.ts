@@ -1,7 +1,7 @@
 // src/subscriber/subscriber.service.ts
 
 import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import type { ConfigService } from '@nestjs/config';
 import * as crypto from 'crypto';
 
 @Injectable()
@@ -23,7 +23,7 @@ export class SubscriberService {
       const expected = hmac.digest('hex');
       return expected === hash;
     } catch (error) {
-      this.logger.error(`Error verifying signature: ${error.message}`);
+      this.logger.error(`Error al verificar la firma: ${error.message}.`);
       return false;
     }
   }
