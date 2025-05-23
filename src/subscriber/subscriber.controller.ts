@@ -11,8 +11,8 @@ import {
   Headers,
   Logger,
 } from '@nestjs/common';
-import type { Request, Response } from 'express';
-import type { SubscriberService } from './subscriber.service';
+import { Request, Response } from 'express';
+import { SubscriberService } from './subscriber.service';
 import { ApiHeader, ApiQuery } from '@nestjs/swagger';
 
 @Controller('callback')

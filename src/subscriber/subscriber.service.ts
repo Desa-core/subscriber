@@ -1,7 +1,7 @@
 // src/subscriber/subscriber.service.ts
 
 import { Injectable, Logger } from '@nestjs/common';
-import type { ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import * as crypto from 'crypto';
 
 @Injectable()
