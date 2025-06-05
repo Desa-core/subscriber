@@ -22,9 +22,9 @@ export class SubscriberController {
   constructor(private readonly subscriberService: SubscriberService) {}
 
   /// Verificación de la suscripción (GET)
-  /// Este endpoint es llamado por el proveedor para verificar la suscripción.
-  /// Debe devolver el valor del parámetro "challenge" que recibe en la query.
-  /// El proveedor lo usará para verificar que el endpoint es correcto.
+  /// Esta operación es peticionada por el hub para verificar la suscripción.
+  /// Debe devolver el valor del parámetro "challenge" que recibe por query param.
+  /// El hub lo usará para verificar que el endpoint es correcto.
   @Get()
   @ApiQuery({
     name: 'topic',
@@ -52,11 +52,11 @@ export class SubscriberController {
   }
 
   /// Recepción de contenido (POST)
-  /// Este endpoint es llamado por el proveedor para enviar contenido.
+  /// Esta operación es peticionada por el hub para recibir contenido.
   /// Debe procesar el contenido y devolver un código 204 (No Content) para indicar que lo recibió correctamente.
   /// Si no se puede procesar el contenido, debe devolver un código 200 (OK) para evitar reintentos.
   /// El contenido se recibe en el cuerpo de la petición.
-  /// El proveedor enviará el contenido en formato JSON.
+  /// El hub enviará el contenido en formato JSON.
   @Post()
   @ApiHeader({
     name: 'x-hub-signature',

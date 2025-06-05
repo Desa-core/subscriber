@@ -1,0 +1,98 @@
+{
+  "info": {
+    "name": "Subscriber API",
+    "description": "Collection for Subscriber Service endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Subscription Verification",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/callback?topic={{topic}}&challenge={{challenge}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "callback"
+          ],
+          "query": [
+            {
+              "key": "topic",
+              "value": "{{topic}}"
+            },
+            {
+              "key": "challenge",
+              "value": "{{challenge}}"
+            }
+          ]
+        },
+        "description": "Endpoint for subscription verification. Returns the challenge value to confirm subscription.\n\nExample:\n- topic: order.created\n- challenge: 123456789"
+      }
+    },
+    {
+      "name": "Content Reception",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-hub-signature",
+            "value": "{{x-hub-signature}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{{body}}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/callback",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "callback"
+          ]
+        },
+        "description": "Endpoint for receiving content from the provider.\n\nExample:\n- x-hub-signature: sha256=3c81cc9496e1c25250f6ccb85f697c1bb623e3480d6538ad8cb6a6648142777d\n- body: {\n    \"event\": \"order.created\",\n    \"data\": { ... }\n  }"
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "topic",
+      "value": "order.created",
+      "type": "string"
+    },
+    {
+      "key": "challenge",
+      "value": "123456789",
+      "type": "string"
+    },
+    {
+      "key": "x-hub-signature",
+      "value": "sha256=3c81cc9496e1c25250f6ccb85f697c1bb623e3480d6538ad8cb6a6648142777d",
+      "type": "string"
+    },
+    {
+      "key": "body",
+      "value": "{\n  \"event\": \"order.created\",\n  \"data\": { ... }\n}",
+      "type": "string"
+    }
+  ]
+}
