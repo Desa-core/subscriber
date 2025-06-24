@@ -10,7 +10,7 @@ El hub lo usará para verificar que el endpoint es correcto.
 
 Ejemplo de petición del hub al subscriptor
 ```bash
-curl -X GET "http://localhost:3000/callback?topic=pedido.creado&challenge=123456789"
+curl -X GET "http://host.docker.internal:3000/callback?topic=pedido.creado&challenge=123456789"
 ```
 Este ejemplo realiza una petición GET al endpoint /callback
 Incluye los parámetros de consulta requeridos:
@@ -27,7 +27,7 @@ El hub enviará el contenido en formato JSON.
 
 Ejemplo de petición del hub al subscriptor
 ```bash
-curl -X POST "http://localhost:3000/callback" \
+curl -X POST "http://host.docker.internal:3000/callback" \
      -H "Content-Type: application/json" \
      -d '{
            "event": "pedido.creado",
